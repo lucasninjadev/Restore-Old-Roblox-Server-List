@@ -1,0 +1,2 @@
+UPDATE LOG:
+- Fixed skipping of first server when turning on a size filter
