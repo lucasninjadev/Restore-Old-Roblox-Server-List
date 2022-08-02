@@ -48,7 +48,7 @@ const pageStatus = document.getElementById('rsbx-maxPages');
 pageNum.style.visibility = 'hidden';
 pageNum.value = 1;
 
-size.src = getURL('images/inf.png');
+size.src = getURL('images/10.png');
 type.src = getURL('images/desc.png');
 search.src = getURL('images/search.png');
 
@@ -58,7 +58,6 @@ const color = hex => {
 
 let buttondel = false;
 let asc = false;
-let playerDesc = false;
 
 let foundAllServers = false;
 let allPlayers = [];
@@ -66,7 +65,7 @@ let playersCount = 0;
 let playersChecked = 0;
 let maxPlayers = 0;
 
-let maxServers = 1000000;
+let maxServers = 10;
 let maxPages = 1;
 let page = 1;
 
@@ -88,8 +87,8 @@ pageNum.oninput = () => {
     page = pageNum.value;
 
   const [, place] = window.location.href.match(/games\/(\d+)\//);
-  reloadServers(place);
 
+  reloadServers(place);
 }
 
 async function fetchServers(place = '', cursor = '', attempts = 0) {
@@ -101,6 +100,10 @@ async function fetchServers(place = '', cursor = '', attempts = 0) {
   }
 
   if (!data || data.length === 0) {
+    if (!nextPageCursor) {
+      foundAllServers = true;
+      return;
+    }
     await sleep(1);
     return fetchServers(place, cursor, attempts + 1);
   }
@@ -123,7 +126,6 @@ async function fetchServers(place = '', cursor = '', attempts = 0) {
     foundAllServers = true;
     return;
   }
-
   return fetchServers(place, nextPageCursor);
 }
 
@@ -176,6 +178,10 @@ async function findTarget(place) {
     targetServerId.serverSize = allThumbnails.get(targetServerId.serverId).length
   });
   if (targetServersId.length) {
+    targetServersId.forEach(targetServerId => {
+      const thumbnails = allThumbnails.get(targetServerId.serverId);
+      thumbnails.reverse();
+    })
     reloadServers(place);
   } else {
     color(COLORS.RED);
@@ -215,7 +221,6 @@ search.addEventListener('click', async event => {
   size.disabled = true;
   pageNum.style.visibility = 'hidden';
   pageStatus.innerText = '';
-  playerDesc = false;
 
   pageNum.value = 1;
   page = 1;
@@ -248,17 +253,17 @@ size.addEventListener('click', async event => {
   event.preventDefault();
 
   if (maxServers == 1000000) {
-    maxServers = 50;
-    size.src = getURL('images/50.png');
-  } else if (maxServers == 50) {
-    maxServers = 25;
-    size.src = getURL('images/25.png');
-  } else if (maxServers == 25) {
     maxServers = 10;
     size.src = getURL('images/10.png');
-  } else if (maxServers == 10) {
+  } else if (maxServers == 50) {
     maxServers = 1000000;
     size.src = getURL('images/inf.png');
+  } else if (maxServers == 25) {
+    maxServers = 50;
+    size.src = getURL('images/50.png');
+  } else if (maxServers == 10) {
+    maxServers = 25;
+    size.src = getURL('images/25.png');
   };
 
   pageNum.value = 1;
@@ -322,11 +327,6 @@ function reloadServers(place) {
     const item = document.createElement('li');
 
     const thumbnails = allThumbnails.get(targetServersId[i].serverId);
-
-    if (!playerDesc) {
-      thumbnails.reverse();
-      playerDesc = true;
-    }
 
     item.className = 'stack-row rbx-game-server-item';
     item.innerHTML = `
