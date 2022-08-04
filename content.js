@@ -41,10 +41,13 @@ const post = async (url, body) => {
 
 const size = document.getElementById('rsbx-size');
 const type = document.getElementById('rsbx-type');
+const input = document.getElementById('rsbx-input');
 const search = document.getElementById('rsbx-search');
 const status = document.getElementById('rsbx-status');
 const pageNum = document.getElementById('rsbx-page');
 const pageStatus = document.getElementById('rsbx-maxPages');
+input.style.visibility = 'hidden';
+input.value = 1;
 pageNum.style.visibility = 'hidden';
 pageNum.value = 1;
 
@@ -69,6 +72,8 @@ let maxServers = 10;
 let maxPages = 1;
 let page = 1;
 
+let playerImageUrl = 'https://tr.rbxcdn.com/837aca8a1522baa27e951da106284553/150/150/AvatarHeadshot/Png';
+
 let targetServersId = {
   serverId: "",
   serverSize: 0
@@ -76,6 +81,18 @@ let targetServersId = {
 let highlighted = [];
 
 const allThumbnails = new Map();
+
+input.oninput = (async => {
+  input.value = input.value.replace(/[e\+\-]/gi, "");
+  if (!(isNaN(input.value) || input.value == "" || input.value == " " || input.value == 0 || input.value == null || input.value == false))
+    mid();
+});
+
+async function mid() {
+  await updateUser();
+  const [, place] = window.location.href.match(/games\/(\d+)\//);
+  reloadServers(place);
+}
 
 pageNum.oninput = () => {
 
@@ -187,10 +204,6 @@ async function findTarget(place) {
     color(COLORS.RED);
     status.innerText = 'Error, likely 0 servers found.';
   }
-
-  search.disabled = false;
-
-  search.src = getURL('images/search.png');
 }
 
 async function find(place) {
@@ -212,6 +225,19 @@ async function find(place) {
   findTarget(place);
 }
 
+async function updateUser() {
+  try {
+    const { data: [{ imageUrl }] } = await get(`thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${input.value}&size=150x150&format=Png&isCircular=false`);
+    if (imageUrl.length > 0 && imageUrl != 'https://t3.rbxcdn.com/894dca84231352d56ec346174a3c0cf9' && imageUrl != 'https://t5.rbxcdn.com/5228e2fd54377f39e87d3c25a58dd018')
+      playerImageUrl = imageUrl
+    input.style.color = '#ffffff';
+    if (imageUrl == 'https://t3.rbxcdn.com/894dca84231352d56ec346174a3c0cf9' || imageUrl == 'https://t5.rbxcdn.com/5228e2fd54377f39e87d3c25a58dd018')
+      input.style.color = '#ff0000';
+  } catch (error) {
+    input.style.color = '#ff0000';
+  }
+};
+
 search.addEventListener('click', async event => {
   // Prevents page from refreshing
   event.preventDefault();
@@ -220,6 +246,7 @@ search.addEventListener('click', async event => {
   type.disabled = true;
   size.disabled = true;
   pageNum.style.visibility = 'hidden';
+  input.style.visibility = 'hidden';
   pageStatus.innerText = '';
 
   pageNum.value = 1;
@@ -271,7 +298,7 @@ size.addEventListener('click', async event => {
 
   const [, place] = window.location.href.match(/games\/(\d+)\//);
 
-  reloadServers(place)
+  reloadServers(place);
 });
 
 function deleteExtraInfo() {
@@ -312,6 +339,19 @@ function reloadServers(place) {
   pageStatus.innerText = 'Page ⠀⠀⠀⠀⠀of ' + maxPages;
   pageNum.disabled = false;
 
+  let contains = false;
+  targetServersId.forEach((targetServerId) => {
+    const thumbnails = allThumbnails.get(targetServerId.serverId);
+    for (let j = 0; j < thumbnails.length; j++) {
+      if (thumbnails[j] === playerImageUrl ? thumbnails[j] : null) {
+        input.style.color = '#09b000';
+        contains = true;
+      }
+    }
+  });
+  if (!contains)
+  input.style.backgroundColor = '#393b3d';
+
   for (let i = maxServers * (page - 1); i < maxServers * page; i++) {
     if (i >= targetServersId.length)
       break;
@@ -327,6 +367,12 @@ function reloadServers(place) {
     const item = document.createElement('li');
 
     const thumbnails = allThumbnails.get(targetServersId[i].serverId);
+
+    let foundTarget = false;
+    for (let j = 0; j < thumbnails.length; j++) {
+      if (!foundTarget)
+        foundTarget = thumbnails[j] === playerImageUrl ? thumbnails[j] : null;
+    }
 
     item.className = 'stack-row rbx-game-server-item';
     item.innerHTML = `
@@ -365,6 +411,10 @@ function reloadServers(place) {
     item.style.borderColor = 'rgb(101, 102, 104)'
     item.style.borderStyle = 'solid';
     item.style.borderWidth = '1px';
+    if (foundTarget)
+      item.style.borderColor = 'rgb(0, 176, 111)'
+    if (foundTarget)
+      input.style.color = '#00ffa2';
 
     first.parentNode.insertBefore(item, first);
     highlighted.push(item);
@@ -376,5 +426,7 @@ function reloadServers(place) {
   search.disabled = false;
   type.disabled = false;
   pageNum.style.visibility = 'visible';
+  input.style.visibility = 'visible';
+  input.disabled = false;
   size.disabled = false;
 };

@@ -65,9 +65,24 @@
     color: #000000;
 }
 
+#rsbx-input {
+    position: absolute;
+    width: 120px;
+    transform: translate(0px, -30px);
+    z-index: 1;
+    box-sizing: 0;
+    outline: none !important;
+    box-shadow: none !important;
+    border: 1px;
+    border-style: solid;
+    border-color: #656668;
+    background-color: #393b3d;
+    color: #ffffff;
+}
+
 #rsbx-status {
     position: absolute;
-    transform: translate(212px, 14px);
+    transform: translate(162px, 14px);
 }
 
 #rsbx-maxPages {
