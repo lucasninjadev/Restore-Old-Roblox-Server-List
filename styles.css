@@ -4,7 +4,7 @@
     width: 0px;
 }
 
-#rsbx-size {
+#rsbx-reload {
     height: 50px;
     width: 50px;
     opacity: 100%;
@@ -12,15 +12,15 @@
     position: absolute;
     transform: translate(0px);
     border: none;
-    background-color: #656668;
+    background-color: #d28500;
     transition: background-color 0.5s;
 }
 
-#rsbx-size:disabled {
+#rsbx-reload:disabled {
     opacity: 50%;
 }
 
-#rsbx-type {
+#rsbx-search {
     height: 50px;
     width: 50px;
     opacity: 100%;
@@ -32,11 +32,11 @@
     transition: background-color 0.5s;
 }
 
-#rsbx-type:disabled {
+#rsbx-search:disabled {
     opacity: 50%;
 }
 
-#rsbx-search {
+#rsbx-userImage {
     height: 50px;
     width: 50px;
     opacity: 100%;
@@ -44,12 +44,8 @@
     position: absolute;
     transform: translate(100px);
     border: none;
-    background-color: #0077ff;
+    background-color: #c0bcbc;
     transition: background-color 0.5s;
-}
-
-#rsbx-search:disabled {
-    opacity: 50%;
 }
 
 #rsbx-page {
@@ -61,28 +57,18 @@
     outline: none !important;
     box-shadow: none !important;
     border: none !important;
-    background-color: #ffffff;
+    background-color: #d0d0d0;
     color: #000000;
 }
 
-#rsbx-input {
+#rsbx-userStatus {
     position: absolute;
-    width: 120px;
-    transform: translate(0px, -30px);
-    z-index: 1;
-    box-sizing: 0;
-    outline: none !important;
-    box-shadow: none !important;
-    border: 1px;
-    border-style: solid;
-    border-color: #656668;
-    background-color: #393b3d;
-    color: #ffffff;
+    transform: translate(162px, -1px);
 }
 
 #rsbx-status {
     position: absolute;
-    transform: translate(162px, 14px);
+    transform: translate(162px, 28px);
 }
 
 #rsbx-maxPages {

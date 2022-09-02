@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <form autocomplete="off">
-  <input type="image" id="rsbx-size" disabled>
-  <input type="image" id="rsbx-type" disabled>
-  <input type="image" id="rsbx-search">
-  <input type="number" id="rsbx-input" name="input" placeholder="User ID">
+  <input type="image" id="rsbx-reload" title="Useful for changing user ID, server list size or ascending/descending (Doesn't reload servers)" disabled>
+  <input class="trackerrsbx" type="image" title="Search for new servers or refresh the current list" id="rsbx-search" src="1">
+  
+  <!--<input type="number" id="rsbx-input" name="input" placeholder="User ID">-->
   <input type="number" id="rsbx-page" min="1" disabled>
 
 </form>
 
+<img id ="rsbx-userImage"></img>
+<p id="rsbx-userStatus"></p>
 <p id="rsbx-status"></p>
 <p id="rsbx-maxPages"></p>

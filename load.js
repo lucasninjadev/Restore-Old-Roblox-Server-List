@@ -20,13 +20,8 @@ function waitForElm(selector) {
   const div = document.createElement('div');
   div.id = 'rsbx-panel';
   div.innerHTML = await fetch(chrome.runtime.getURL('panel.html')).then(res => res.text());
-
   if (document.body.classList.contains('dark-theme')) div.classList.add('dark');
-
-  const linebreak = document.createElement('br');
-
   const runningGames = await waitForElm('#rbx-running-games');
-
   runningGames.parentNode.insertBefore(div, runningGames);
   runningGames.parentNode.insertBefore(linebreak, runningGames);
 })();

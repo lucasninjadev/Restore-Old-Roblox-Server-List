@@ -39,28 +39,44 @@ const post = async (url, body) => {
   }
 };
 
-const size = document.getElementById('rsbx-size');
-const type = document.getElementById('rsbx-type');
-const input = document.getElementById('rsbx-input');
+const reloadbutton = document.getElementById('rsbx-reload');
+const userImage = document.getElementById('rsbx-userImage');
 const search = document.getElementById('rsbx-search');
 const status = document.getElementById('rsbx-status');
 const pageNum = document.getElementById('rsbx-page');
+const userStatus = document.getElementById('rsbx-userStatus');
 const pageStatus = document.getElementById('rsbx-maxPages');
-input.style.visibility = 'hidden';
-input.value = 1;
 pageNum.style.visibility = 'hidden';
 pageNum.value = 1;
 
-size.src = getURL('images/10.png');
-type.src = getURL('images/desc.png');
+reloadbutton.src = getURL('images/reload-symbol.png');
 search.src = getURL('images/search.png');
+
+removeExtras()
+async function removeExtras() {
+  var counter = 0;
+  while (counter < 5) {
+    var fakeElements = document.getElementsByClassName('trackerrsbx');
+    for(var i = fakeElements.length - 1; i >= 0; i--) {
+      if(fakeElements[i].getAttribute('src').length > 2) {
+      } else {
+        fakeElements[i].parentElement.parentElement.remove();
+      }
+    }
+    await sleep(0.1)
+    counter++;
+  }
+}
+
+const linebreak = document.createElement('br');
+const runningGames = document.getElementById('rbx-running-games');
+runningGames.parentNode.insertBefore(linebreak, runningGames);
 
 const color = hex => {
   search.style.backgroundColor = hex;
 };
 
 let buttondel = false;
-let asc = false;
 
 let foundAllServers = false;
 let allPlayers = [];
@@ -82,31 +98,12 @@ let highlighted = [];
 
 const allThumbnails = new Map();
 
-input.oninput = (async => {
-  input.value = input.value.replace(/[e\+\-]/gi, "");
-  if (!(isNaN(input.value) || input.value == "" || input.value == " " || input.value == 0 || input.value == null || input.value == false))
-    mid();
+chrome.storage.sync.get('autoAttach').then(value => {
+  if (value.autoAttach) {
+    const [, place] = window.location.href.match(/games\/(\d+)\//);
+    searchServers(place);
+  }
 });
-
-async function mid() {
-  await updateUser();
-  const [, place] = window.location.href.match(/games\/(\d+)\//);
-  reloadServers(place);
-}
-
-pageNum.oninput = () => {
-
-  pageNum.value = pageNum.value.replace(/[e\+\-]/gi, "");
-  
-  if (pageNum.value > maxPages || isNaN(pageNum.value) || pageNum.value == "" || pageNum.value == " " || pageNum.value == 0 || pageNum.value == null || pageNum.value == false)
-    pageNum.value = page;
-  else
-    page = pageNum.value;
-
-  const [, place] = window.location.href.match(/games\/(\d+)\//);
-
-  reloadServers(place);
-}
 
 async function fetchServers(place = '', cursor = '', attempts = 0) {
   const { nextPageCursor, data } = await get(`games.roblox.com/v1/games/${place}/servers/Public?limit=100&cursor=${cursor}`);
@@ -202,7 +199,7 @@ async function findTarget(place) {
     reloadServers(place);
   } else {
     color(COLORS.RED);
-    status.innerText = 'Error, likely 0 servers found.';
+    status.innerText = 'No servers found.';
   }
 }
 
@@ -227,79 +224,84 @@ async function find(place) {
 
 async function updateUser() {
   try {
-    const { data: [{ imageUrl }] } = await get(`thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${input.value}&size=150x150&format=Png&isCircular=false`);
+    let userID = 1;
+    await chrome.storage.sync.get('userID').then(value => {
+      userID = value.userID;
+    });
+    const { data: [{ imageUrl }] } = await get(`thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${userID}&size=150x150&format=Png&isCircular=false`);
     if (imageUrl.length > 0 && imageUrl != 'https://t3.rbxcdn.com/894dca84231352d56ec346174a3c0cf9' && imageUrl != 'https://t5.rbxcdn.com/5228e2fd54377f39e87d3c25a58dd018')
-      playerImageUrl = imageUrl
-    input.style.color = '#ffffff';
+      playerImageUrl = imageUrl;
+    userStatus.innerText = '';
+    userImage.src = imageUrl;
+    userImage.style.backgroundColor = "#c0bcbc";
     if (imageUrl == 'https://t3.rbxcdn.com/894dca84231352d56ec346174a3c0cf9' || imageUrl == 'https://t5.rbxcdn.com/5228e2fd54377f39e87d3c25a58dd018')
-      input.style.color = '#ff0000';
+      userStatus.innerText = 'User thumbnail is a common error thumbnail, unreliable result |';
   } catch (error) {
-    input.style.color = '#ff0000';
+    userStatus.innerText = 'User ID Invalid for thumbnail';
+    userImage.src = '';
+    userImage.style.backgroundColor = "#ff3e3e";
   }
 };
+
+reloadbutton.addEventListener('click', async event => {
+  // Prevents page from refreshing
+  event.preventDefault();
+
+  const [, place] = window.location.href.match(/games\/(\d+)\//);
+
+  await updateUser();
+  reloadServers(place);
+});
 
 search.addEventListener('click', async event => {
   // Prevents page from refreshing
   event.preventDefault();
 
-  search.disabled = true;
-  type.disabled = true;
-  size.disabled = true;
-  pageNum.style.visibility = 'hidden';
-  input.style.visibility = 'hidden';
-  pageStatus.innerText = '';
+  const [, place] = window.location.href.match(/games\/(\d+)\//);
 
-  pageNum.value = 1;
-  page = 1;
+  searchServers(place);
+});
+
+pageNum.oninput = () => {
+
+  pageNum.value = pageNum.value.replace(/[e\+\-]/gi, "");
+  
+  if (pageNum.value > maxPages || isNaN(pageNum.value) || pageNum.value == "" || pageNum.value == " " || pageNum.value == 0 || pageNum.value == null || pageNum.value == false)
+    pageNum.value = page;
+  else
+    page = pageNum.value;
 
   const [, place] = window.location.href.match(/games\/(\d+)\//);
+
+  reloadServers(place);
+}
+
+
+async function searchServers(place) {
+  search.disabled = true;
+  reloadbutton.disabled = true;
+  pageNum.style.visibility = 'hidden';
+  pageStatus.innerText = '';
+  updateUser();
+
+  boolStop = false;
+  //await sleep(0.3)
+  while (!boolStop) {
+    if (document.getElementById('rbx-game-server-item-container')) {
+      boolStop = true;
+    } else {
+      var aTags = document.getElementsByClassName("no-servers-message");
+      for (var i = 0; i < aTags.length; i++) {
+        if (aTags[i].innerText !== 'No Servers Found.')
+          if (aTags[i].parentElement.parentElement.id == 'rbx-running-games')
+            aTags[i].parentElement.parentElement.firstElementChild.firstElementChild.lastElementChild.click();
+      }
+      await sleep(0.5)
+    }
+  }
 
   find(place);
-});
-
-type.addEventListener('click', async event => {
-  event.preventDefault();
-
-  if (asc)
-    type.src = getURL('images/desc.png');
-  else
-    type.src = getURL('images/asc.png');
-  
-  asc = !asc;
-
-  search.disabled = true;
-  type.disabled = true;
-  size.disabled = true;
-
-  const [, place] = window.location.href.match(/games\/(\d+)\//);
-
-  reloadServers(place);
-});
-
-size.addEventListener('click', async event => {
-  event.preventDefault();
-
-  if (maxServers == 1000000) {
-    maxServers = 10;
-    size.src = getURL('images/10.png');
-  } else if (maxServers == 50) {
-    maxServers = 1000000;
-    size.src = getURL('images/inf.png');
-  } else if (maxServers == 25) {
-    maxServers = 50;
-    size.src = getURL('images/50.png');
-  } else if (maxServers == 10) {
-    maxServers = 25;
-    size.src = getURL('images/25.png');
-  };
-
-  pageNum.value = 1;
-  page = 1;
-
-  const [, place] = window.location.href.match(/games\/(\d+)\//);
-
-  reloadServers(place);
-});
+}
 
 function deleteExtraInfo() {
   if (!buttondel) {
@@ -311,14 +313,6 @@ function deleteExtraInfo() {
       loadbutton.remove();
     buttondel = true;
   }
-  if (asc)
-    targetServersId.sort((a, b) => {
-      return a.serverSize - b.serverSize;
-    });
-  else
-    targetServersId.sort((a, b) => {
-      return b.serverSize - a.serverSize;
-    });
   var servers = document.getElementsByClassName('stack-row rbx-game-server-item');
     while (servers.length > 0)
       servers[0].parentNode.removeChild(servers[0]);
@@ -328,29 +322,59 @@ function deleteExtraInfo() {
         servers[i].removeChild(servers[i].firstChild);
 };
 
-function reloadServers(place) {
-  deleteExtraInfo();
+async function reloadServers(place) {
+  let asc = false;
+  await chrome.storage.sync.get('descending').then(value => {
+    asc = value.descending;
+  });
+  
+  if (asc)
+    targetServersId.sort((a, b) => {
+      return a.serverSize - b.serverSize;
+    });
+  else
+    targetServersId.sort((a, b) => {
+      return b.serverSize - a.serverSize;
+    });
+
   maxPages = 1;
+  await chrome.storage.sync.get('listSize').then(value => {
+    maxServers = value.listSize;
+  });
   let serverCount = targetServersId.length;
   while (serverCount > maxServers) {
     maxPages += 1;
     serverCount -= maxServers;
   }
+
+  if (page > maxPages) {
+    page = maxPages;
+    pageNum.value = maxPages;
+  }
+
   pageStatus.innerText = 'Page ⠀⠀⠀⠀⠀of ' + maxPages;
   pageNum.disabled = false;
 
-  let contains = false;
-  targetServersId.forEach((targetServerId) => {
-    const thumbnails = allThumbnails.get(targetServerId.serverId);
-    for (let j = 0; j < thumbnails.length; j++) {
-      if (thumbnails[j] === playerImageUrl ? thumbnails[j] : null) {
-        input.style.color = '#09b000';
-        contains = true;
+  if (!userStatus.innerText.includes('User ID Invalid for thumbnail'))
+    for (let i = 0; i < targetServersId.length; i++) {
+      const thumbnails = allThumbnails.get(targetServersId[i].serverId);
+      for (let j = 0; j < thumbnails.length; j++) {
+        if (thumbnails[j] === playerImageUrl ? thumbnails[j] : null) {
+          let serverCount = i + 1;
+          let serverPage = 1;
+          while (serverCount > maxServers) {
+            serverCount -= maxServers;
+            serverPage++;
+          }
+          if (!userStatus.innerText.includes('User found!'))
+            userStatus.innerText += ' User found! Server on page ' + serverPage;
+        }
       }
     }
-  });
-  if (!contains)
-  input.style.backgroundColor = '#393b3d';
+  if (!userStatus.innerText.includes('User found!') && !userStatus.innerText.includes('User not found') && !userStatus.innerText.includes('User ID Invalid for thumbnail'))
+    userStatus.innerText += ' User not found';
+
+  deleteExtraInfo();
 
   for (let i = maxServers * (page - 1); i < maxServers * page; i++) {
     if (i >= targetServersId.length)
@@ -395,7 +419,6 @@ function reloadServers(place) {
     }
 
     // Neatness....
-    item.style.backgroundColor = '#393b3d';
     item.style.height = heightss + 'px';
     item.style.margin = '0 0 6px';
     item.style.padding = '12px';
@@ -408,13 +431,18 @@ function reloadServers(place) {
     rightSide.style.width = '77%';
     rightSide.style.textAlign = 'left';
     rightSide.style.transform = 'translate(5px, 0px)';
-    item.style.borderColor = 'rgb(101, 102, 104)'
     item.style.borderStyle = 'solid';
     item.style.borderWidth = '1px';
-    if (foundTarget)
-      item.style.borderColor = 'rgb(0, 176, 111)'
-    if (foundTarget)
-      input.style.color = '#00ffa2';
+    if (document.body.classList.contains('dark-theme')) {
+      item.style.backgroundColor = '#393b3d';
+      item.style.borderColor = 'rgb(101, 102, 104)';
+    } else if (document.body.classList.contains('light-theme')) {
+      item.style.backgroundColor = '#fdfdfd';
+      item.style.borderColor = 'rgb(208, 208, 208)';
+    }
+    if (foundTarget) {
+      item.style.borderColor = 'rgb(0, 176, 111)';
+    }
 
     first.parentNode.insertBefore(item, first);
     highlighted.push(item);
@@ -424,9 +452,6 @@ function reloadServers(place) {
     status.innerText = 'Search completed';
   }
   search.disabled = false;
-  type.disabled = false;
   pageNum.style.visibility = 'visible';
-  input.style.visibility = 'visible';
-  input.disabled = false;
-  size.disabled = false;
+  reloadbutton.disabled = false;
 };
