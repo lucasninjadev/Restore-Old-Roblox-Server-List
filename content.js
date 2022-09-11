@@ -228,6 +228,8 @@ async function updateUser() {
     await chrome.storage.sync.get('userID').then(value => {
       userID = value.userID;
     });
+    if (userID == undefined)
+      userID = 1;
     const { data: [{ imageUrl }] } = await get(`thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${userID}&size=150x150&format=Png&isCircular=false`);
     if (imageUrl.length > 0 && imageUrl != 'https://t3.rbxcdn.com/894dca84231352d56ec346174a3c0cf9' && imageUrl != 'https://t5.rbxcdn.com/5228e2fd54377f39e87d3c25a58dd018')
       playerImageUrl = imageUrl;
@@ -327,6 +329,8 @@ async function reloadServers(place) {
   await chrome.storage.sync.get('descending').then(value => {
     asc = value.descending;
   });
+  if (asc == undefined)
+    asc = false;
   
   if (asc)
     targetServersId.sort((a, b) => {
@@ -341,6 +345,8 @@ async function reloadServers(place) {
   await chrome.storage.sync.get('listSize').then(value => {
     maxServers = value.listSize;
   });
+  if (maxServers == undefined)
+    maxServers = 10;
   let serverCount = targetServersId.length;
   while (serverCount > maxServers) {
     maxPages += 1;
