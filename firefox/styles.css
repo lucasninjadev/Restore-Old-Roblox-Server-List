@@ -1,0 +1,111 @@
+#rsbx-panel {
+    background-color: white;
+    height: 50px;
+    width: 0px;
+}
+
+#rsbx-reload {
+    height: 50px;
+    width: 50px;
+    opacity: 100%;
+    z-index: 1;
+    position: absolute;
+    transform: translate(0px);
+    border: none;
+    background-color: #d28500;
+    transition: background-color 0.5s;
+}
+
+#rsbx-reload:disabled {
+    opacity: 50%;
+}
+
+#rsbx-search {
+    height: 50px;
+    width: 50px;
+    opacity: 100%;
+    z-index: 1;
+    position: absolute;
+    transform: translate(50px);
+    border: none;
+    background-color: #0077ff;
+    transition: background-color 0.5s;
+}
+
+#rsbx-search:disabled {
+    opacity: 50%;
+}
+
+#rsbx-userImage {
+    height: 50px;
+    width: 50px;
+    opacity: 100%;
+    z-index: 1;
+    position: absolute;
+    transform: translate(100px);
+    border: none;
+    background-color: #c0bcbc;
+    transition: background-color 0.5s;
+}
+
+#rsbx-page {
+    position: absolute;
+    width: 50px;
+    transform: translate(45px, 59px);
+    z-index: 1;
+    box-sizing: 0;
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    background-color: #d0d0d0;
+    color: #000000;
+}
+
+#rsbx-userStatus {
+    position: absolute;
+    transform: translate(162px, -1px);
+}
+
+#rsbx-status {
+    position: absolute;
+    transform: translate(162px, 28px);
+}
+
+#rsbx-maxPages {
+    position: absolute;
+    transform: translate(0px, 57px);
+    user-select: none;
+}
+
+.dark {
+    background-color: #393b3d !important;
+}
+
+.invalid {
+    border-color: red !important;
+}
+
+.highlighted {
+    border: solid #00b06f !important;
+}
+
+.dark::-webkit-input-placeholder {
+    /* WebKit, Blink, Edge */
+    color: #757575 !important;
+}
+
+.dark:-moz-placeholder {
+    /* Mozilla Firefox 4 to 18 */
+    color: #757575 !important;
+}
+
+/*#rsbx-page::-webkit-outer-spin-button,
+#rsbx-page::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden
+}
+
+#rsbx-page[type=number] {
+    -moz-appearance:textfield; /* Firefox
+}*/
