@@ -10,13 +10,7 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo, { url }) => {
     await browser.scripting.insertCSS({ target, files: ['styles.css'] });
 
     await browser.scripting.executeScript({ target, files: ['load.js'] });
+
     browser.scripting.executeScript({ target, files: ['content.js'] });
   });
 });
-
-const func = (place, id) => window.Roblox.GameLauncher.joinGameInstance(place, id);
-browser.runtime.onMessage.addListener(({ message }, { tab }) => browser.scripting.executeScript(
-  {
-    target: { tabId: tab.id }, func, args: [message.place, message.id], world: 'MAIN',
-  },
-));

@@ -94,7 +94,6 @@ let targetServersId = {
   serverId: "",
   serverSize: 0
 };
-let highlighted = [];
 
 const allThumbnails = new Map();
 
@@ -409,7 +408,7 @@ async function reloadServers(place) {
       <div class="section-left rbx-game-server-details'">
       <div class="text-info rbx-game-status rbx-game-server-status'">${thumbnails.length} of ${maxPlayers} people max</div>
       <span>
-      <button data-id="${targetServersId[i].serverId}" type="button" class="btn-full-width btn-control-xs rbx-game-server-join btn-primary-md btn-min-width">Join</button>
+      <button onclick='Roblox.GameLauncher.joinGameInstance(${place}, "${targetServersId[i].serverId}")' type="button" class="btn-full-width btn-control-xs rbx-game-server-join btn-primary-md btn-min-width">Join</button>
       </span>
       </div>
       <div class="section-right rbx-game-server-players">
@@ -451,10 +450,7 @@ async function reloadServers(place) {
     }
 
     first.parentNode.insertBefore(item, first);
-    highlighted.push(item);
 
-    const [join] = document.querySelectorAll(`[data-id="${targetServersId[i].serverId}"]`);
-    join.onclick = () => browser.runtime.sendMessage({ message: { place, id: targetServersId[i].serverId } });
     status.innerText = 'Search completed';
   }
   search.disabled = false;
