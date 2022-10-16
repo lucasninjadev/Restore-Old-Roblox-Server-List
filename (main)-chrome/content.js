@@ -94,6 +94,7 @@ let targetServersId = {
   serverId: "",
   serverSize: 0
 };
+let serverIds = new Set();
 
 const allThumbnails = new Map();
 
@@ -122,16 +123,17 @@ async function fetchServers(place = '', cursor = '', attempts = 0) {
   }
 
   data.forEach((server) => {
-    server.playerTokens.forEach((playerToken) => {
-      playersCount += 1;
-      allPlayers.push({
-        token: playerToken,
-        type: 'AvatarHeadshot',
-        size: '150x150',
-        requestId: server.id,
+    if (!serverIds.has(server.id))
+      server.playerTokens.forEach((playerToken) => {
+        serverIds.add(server.id)
+        playersCount += 1;
+        allPlayers.push({
+          token: playerToken,
+          type: 'AvatarHeadshot',
+          size: '150x150',
+          requestId: server.id,
+        });
       });
-    });
-
     maxPlayers = server.maxPlayers;
   });
 
@@ -171,9 +173,7 @@ async function findTarget(place) {
 
         playersChecked += 1;
 
-        if (!thumbnails.includes(thumbnailData.imageUrl)) {
-          thumbnails.push(thumbnailData.imageUrl);
-        }
+        thumbnails.push(thumbnailData.imageUrl);
 
         //const foundTarget = thumbnailData.imageUrl === imageUrl ? thumbnailData.requestId : null;
 
