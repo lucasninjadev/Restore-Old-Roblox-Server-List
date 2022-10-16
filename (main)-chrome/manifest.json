@@ -1,7 +1,7 @@
 {
   "name": "Restore Old Roblox Server List",
   "manifest_version": 3,
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "Restores the old roblox server list & allows searching of User ID's in games",
   "icons": {
     "16": "images/16x16.png",

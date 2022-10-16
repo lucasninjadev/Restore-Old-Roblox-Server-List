@@ -283,6 +283,7 @@ async function searchServers(place) {
   reloadbutton.disabled = true;
   pageNum.style.visibility = 'hidden';
   pageStatus.innerText = '';
+  serverIds = new Set();
   updateUser();
 
   boolStop = false;
