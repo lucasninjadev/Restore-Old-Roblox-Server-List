@@ -1,0 +1,29 @@
+<html>
+	<head>
+		<script src="../js/libraries/jquery-3.6.1.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="../css/advanced-settings.css"/>
+		<script src="../js/pages/advanced-settings.js" defer></script>
+	</head>
+	<body>
+		<h1>Restore Old Roblox Server List (RORSL) Advanced Settings</h1>
+		<h2>Do not change unless you know what you are doing!</h2>
+		<div>
+			<h4 class="settings-text" style="float: left;">Settings Panel Sync</h4>
+      <div class="tooltip">
+        <img class="info-button" src="../images/info_icon.png" style="filter:brightness(0) saturate(100%) invert(15%) sepia(79%) saturate(6382%) hue-rotate(357deg) brightness(100%) contrast(115%);">
+        <span class="tooltiptext">!IMPORTANT!<br/>Disable only if you're experiencing issues changing standard settings. Disabling Sync will make it so that changes on one page will not appear on another.</span>
+      </div>
+      <label class="switch" style="float: right;">
+        <input type="checkbox" id="settingsSync" checked>
+        <span class="slider round"></span>
+      </label>
+      <br style="clear:both" />
+      <h4 class="settings-text" style="float: left;">Search Passes</h4>
+      <div class="tooltip">
+        <img class="info-button" src="../images/info_icon.png" style="filter:brightness(0) saturate(100%) invert(87%) sepia(78%) saturate(4767%) hue-rotate(358deg) brightness(107%) contrast(107%);">
+        <span class="tooltiptext">Number of times the extension searches through the roblox API to find servers, it can sometimes skip over some on larger games.<br/>Max 10, Recommended 1-3.</span>
+      </div>
+      <input class="settings-text-input" type="number" id="searchPasses" value=1 min=1 max=10>
+		</div>
+	</body>
+</html>

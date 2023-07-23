@@ -1,16 +1,40 @@
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, { url }) => {
-  if (changeInfo.status !== 'complete' || !/https:\/\/.+roblox.com\/games/g.test(url)) return;
+popupsOpen = 0
 
-  const target = { tabId };
+chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+	switch(message) {
+		case 'rorsl background refresh settings':
+			chrome.storage.local.get('settingsSync').then(value => {
+				if (value.settingsSync != false) {
+					if (popupsOpen > 0) {
+						// Send update to popups
+						chrome.runtime.sendMessage('rorsl refresh settings');
+					}
+					// Send update to all tabs
+					chrome.tabs.query({}, function(tabs) {
+						tabs.forEach(function(tab) {
+							if (tab.url != undefined && tab.url.includes('.roblox.com/games/')) {
+								chrome.tabs.sendMessage(tab.id, 'rorsl refresh settings');
+							}
+						});
+					});
+				}
+			});
+			break;
+		case 'rorsl open advanced settings':
+			chrome.tabs.query({ active: true, currentWindow: true}, tabs => {
+				let index = tabs[0].index;
+				chrome.tabs.create({url: chrome.runtime.getURL('html/advanced-settings.html'), index: index + 1});
+			  }
+			);
+			break;
+	}
+});
 
-  // Checks if the panel is already injected into the DOM, and if not execute our scripts. (not perfect)
-  chrome.scripting.executeScript({ target, func: () => Boolean(document.getElementById('rsbx-panel')) }, async ([{ result }]) => {
-    if (result) return;
-    
-    await chrome.scripting.insertCSS({ target, files: ['styles.css'] });
-    
-    await chrome.scripting.executeScript({ target, files: ['load.js'] });
-    
-    chrome.scripting.executeScript({ target, files: ['content.js'] });
-  });
+chrome.runtime.onConnect.addListener(function(port) {
+	if (port.name === 'rorsl-popup') {
+		popupsOpen += 1
+		port.onDisconnect.addListener(function() {
+			popupsOpen -= 1
+		});
+	}
 });
