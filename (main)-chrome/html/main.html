@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+
+<div id="rorsl-settings-button-container"></div>
+<input type="image" id="rorsl-settings-button" title="Settings">
+<div id="rorsl-reload-container"></div>
+<input type="image" id="rorsl-reload" title="Updates the server display and its settings, Doesn't get live servers (servers are from when the search button was last pressed)" disabled>
+<div id="rorsl-search-container">
+<input type="image" id="rorsl-search" title="Search for live servers">
+</div>
+<input type="number" id="rorsl-page" value=1 title="Current page, keeps settings since last refresh or search" disabled>
+<img id ="rorsl-userImage"></img>
+<p id="rorsl-userStatus"></p>
+<p id="rorsl-status"></p>
+<p id="rorsl-maxPages"></p>
+
+<div id="rorsl-settings">
+  <h4 class="rorsl-settings-text" style="float: left; transform: translateY(-4px)">Auto-Search</h4>
+  <div class="rorsl-tooltip">
+    <img class="rorsl-info-button">
+    <span class="rorsl-tooltiptext">Automatically searches for servers the second the panel is loaded.</span>
+  </div>
+  <label class="switch" style="float: right;">
+    <input type="checkbox" id="rorsl-autoAttach">
+    <span class="slider round"></span>
+  </label>
+  <br style="clear:both" />
+  <h4 class="rorsl-settings-text" style="float: left; transform: translateY(-4px)">Servers per page</h4>
+  <div class="rorsl-tooltip">
+    <img class="rorsl-info-button">
+    <span class="rorsl-tooltiptext">The amount of servers that are displayed per page.<br/>Default 10, Max 250.</span>
+  </div>
+  <input class="rorsl-settings-text-input" type="number" id="rorsl-listSize" min=1>
+  <br style="clear:both" />
+  <h4 class="rorsl-settings-text" style="float: left; transform: translateY(-4px)">Descending Player Count</h4>
+  <div class="rorsl-tooltip">
+    <img class="rorsl-info-button">
+    <span class="rorsl-tooltiptext">Servers will order from smallest amount of players to largest.</span>
+  </div>
+  <label class="switch" style="float: right;">
+    <input type="checkbox" id="rorsl-descending">
+    <span class="slider round"></span>
+  </label>
+  <br style="clear:both" />
+  <h4 class="rorsl-settings-text" style="float: left; transform: translateY(-4px)">Search Player Username</h4>
+  <div class="rorsl-tooltip">
+    <img class="rorsl-info-button">
+    <span class="rorsl-tooltiptext">User that the extension will search for in the servers.<br/>(check the help page if it isn't working)</span>
+  </div>
+  <input class="rorsl-settings-text-input" type="text" id="rorsl-username" maxlength="20">
+  <br style="clear:both" />
+  <a class="rorsl-link" id="rorsl-advanced-settings">Advanced Settings </a>
+  <a class="rorsl-link" id="rorsl-help-server" title="https://discord.gg/aYK8jmmcrJ" href="https://discord.gg/aYK8jmmcrJ" target="_blank">Support Server</a>
+</div>
