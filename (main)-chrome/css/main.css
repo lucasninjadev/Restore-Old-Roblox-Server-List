@@ -11,6 +11,7 @@
   width: 50px;
   background-color: #2a2b2d;
   border: none;
+  border-radius: 25px 0 0 25px;
 }
 
 #rorsl-settings-button {
@@ -26,7 +27,7 @@
 
 #rorsl-settings-button:hover {
   animation-name: rotate;
-  animation-duration: 4s;
+  animation-duration: 2s;
   animation-iteration-count: infinite;
   animation-timing-function: linear;
 }
@@ -211,9 +212,9 @@
 
 #rorsl-reload:hover:enabled {
   animation-name: reload-rotate;
-  animation-duration: 2s;
-  animation-iteration-count: 1;
-  animation-timing-function: ease-in-out;
+  animation-duration: 1.5s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
 }
 
 #rorsl-search-container {
@@ -256,6 +257,7 @@
   border: none;
   background-color: #c0bcbc;
   transition: background-color 0.5s;
+  border-radius: 0 25px 25px 0;
 }
 
 #rorsl-page {
@@ -269,6 +271,7 @@
   border: none !important;
   background-color: #d0d0d0;
   color: #000000;
+  border-radius: 7px;
 }
 
 #rorsl-userStatus {
@@ -305,6 +308,7 @@ input::-webkit-inner-spin-button {
   width: 100%;
   border-style: solid;
   border-width: 2px;
+  border-radius: 20px;
 }
 
 .rorsl-server .section-left {
