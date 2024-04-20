@@ -91,8 +91,7 @@
   const status = document.getElementById('rorsl-status');
   const pageNum = document.getElementById('rorsl-page');
   const userStatus = document.getElementById('rorsl-userStatus');
-  const pageStatus = document.getElementById('rorsl-maxPages');
-  pageNum.style.visibility = 'hidden';
+  const pageStatusEnd = document.getElementById('rorsl-maxPagesEnd');
   let panelReady = false;
 
   const color = hex => {
@@ -256,12 +255,11 @@
   async function searchServers() {
     searchButton.disabled = true;
     reloadButton.disabled = true;
-    pageNum.style.visibility = 'hidden';
+    pageNum.parentElement.style.display = 'none';
     searchButtonContainer.style.opacity = '50%';
     reloadButtonContainer.style.opacity = '50%';
     if (div.hasAttribute('page-shown')) div.removeAttribute('page-shown');
-    pageStatus.innerText = '';
-    
+
     targetServerIds = [];
     serverIds.clear();
     friendServers.clear();
@@ -276,8 +274,8 @@
     color(COLORS.BLUE);
     removeExtraInfo();
     deleteRorslServers();
-    updateUser();
     playerUrlReady = false;
+    updateUser();
     var passes = 1;
     chrome.storage.local.get('searchPasses').then(value => {
       if (!isNaN(value.searchPasses)) passes = value.searchPasses;
@@ -382,7 +380,6 @@
     if (!panelReady)
       setTimeout(loadServers, 100);
     else {
-      await waitForElm('.rbx-game-server-item-container');
       removeExtraInfo();
       deleteRorslServers();
 
@@ -391,7 +388,17 @@
           break;
         color(COLORS.GREEN);
 
-        const first = document.querySelectorAll('.rbx-game-server-item-container')[0] || document.querySelectorAll('#rbx-running-games > div.section-content-off.empty-game-instances-container > p')[0];
+        let first = document.querySelectorAll('.rbx-game-server-item-container')[0];
+        if (first == null) {
+          first = document.querySelectorAll('.empty-game-instances-container')
+          for (let i = 0; i < first.length; i++) {
+            if (first[i].parentElement.id == 'rbx-running-games') {
+              first = first[i];
+              break;
+            }
+          }
+        }
+        first.style.display = 'none';
         
         if (first.className == 'no-servers-message') {
           first.parentNode.style['display'] = 'flex';
@@ -432,9 +439,9 @@
       }
       searchButton.disabled = false;
       searchButtonContainer.style.opacity = '100%';
-      pageStatus.innerText = 'Page ⠀⠀⠀⠀⠀of ' + maxPages;
-      pageNum.disabled = false;
-      pageNum.style.visibility = 'visible';
+      
+      pageStatusEnd.innerText = ' of ' + maxPages;
+      pageNum.parentElement.style.display = 'inherit';
       div.setAttribute('page-shown', true);
       reloadButtonContainer.style.opacity = '100%';
       reloadButton.disabled = false;

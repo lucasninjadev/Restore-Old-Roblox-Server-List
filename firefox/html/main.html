@@ -7,11 +7,14 @@
 <div id="rorsl-search-container">
 <input type="image" id="rorsl-search" title="Search for live servers">
 </div>
-<input type="number" id="rorsl-page" value=1 title="Current page, keeps settings since last refresh or search" disabled>
 <img id ="rorsl-userImage"></img>
 <p id="rorsl-userStatus"></p>
 <p id="rorsl-status"></p>
-<p id="rorsl-maxPages"></p>
+<div style="transform: translateY(55px); display: none;">
+  <p id="rorsl-maxPagesBegin">Page </p>
+  <input type="number" id="rorsl-page" value=1 title="Current page, keeps settings since last refresh or search">
+  <p id="rorsl-maxPagesEnd"></p>
+</div>
 
 <div id="rorsl-settings">
   <h4 class="rorsl-settings-text" style="float: left; transform: translateY(-4px)">Auto-Search</h4>

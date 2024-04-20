@@ -258,19 +258,6 @@
   transition: background-color 0.5s;
 }
 
-#rorsl-page {
-  position: absolute;
-  width: 50px;
-  transform: translate(45px, 60px);
-  z-index: 1;
-  box-sizing: 0;
-  outline: none !important;
-  box-shadow: none !important;
-  border: none !important;
-  background-color: #d0d0d0;
-  color: #000000;
-}
-
 #rorsl-userStatus {
   position: absolute;
   transform: translate(212px, -1px);
@@ -281,11 +268,24 @@
   transform: translate(212px, 28px);
 }
 
-#rorsl-maxPages {
+#rorsl-maxPagesBegin, #rorsl-maxPagesEnd {
+  display: inline;
   position: relative;
-  transform: translate(0px, 58px);
 	margin-bottom: 3px;
   user-select: none;
+}
+
+#rorsl-page {
+  display: inline;
+  position: relative;
+  width: 50px;
+  z-index: 1;
+  box-sizing: 0;
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  background-color: #d0d0d0;
+  color: #000000;
 }
 
 /* input::-webkit-outer-spin-button,
