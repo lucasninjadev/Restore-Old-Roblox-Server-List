@@ -12,7 +12,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 					// Send update to all tabs
 					chrome.tabs.query({}, function(tabs) {
 						tabs.forEach(function(tab) {
-							if (tab.url != undefined && tab.url.includes('.roblox.com/games/')) {
+							if (tab.url != undefined && tab.url.includes('.roblox.com/') && tab.url.includes('/games/')) {
 								chrome.tabs.sendMessage(tab.id, 'rorsl refresh settings');
 							}
 						});

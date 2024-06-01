@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
   "name": "Restore Old Roblox Server List",
-  "description": "Restores the old roblox server list & allows searching of User ID's in games",
+  "description": "Restores the old roblox server list & allows searching of users through their username",
   "author": "Lucas",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "icons": {
     "16": "images/16x16.png",
     "32": "images/32x32.png",
@@ -22,7 +22,8 @@
     "service_worker": "background.js"
   },
   "host_permissions": [
-    "https://*.roblox.com/games/"
+    "*://*.roblox.com/games/",
+    "*://*.roblox.com/*/games/"
   ],
   "web_accessible_resources": [
     {
@@ -45,7 +46,8 @@
         "css/main.css"
       ],
       "matches": [
-        "*://*.roblox.com/games/*"
+        "*://*.roblox.com/games/*",
+        "*://*.roblox.com/*/games/*"
       ],
       "run_at": "document_end"
     }
