@@ -410,7 +410,7 @@
         const item = document.createElement('li');
         const thumbnails = allThumbnails.get(targetServerIds[serverNumber].serverId);
         const serverPing = serverPings.get(targetServerIds[serverNumber].serverId); 
-        const inviteURL = `https://www.roblox.com/games/start?placeId=${place}&gameId=${targetServerIds[serverNumber].serverId}`;
+        const inviteURL = `https://www.roblox.com/games/start?placeId=18429922864&launchData=${place}/${targetServerIds[serverNumber].serverId}`;
 
         let friendTags = '';
         if (friendServers.has(targetServerIds[serverNumber].serverId)) {
