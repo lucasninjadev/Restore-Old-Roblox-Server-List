@@ -119,6 +119,7 @@
 
   const friendServers = new Map();
   const allThumbnails = new Map();
+  const serverPings = new Map();
 
   chrome.storage.local.get('autoAttach').then(value => {
     if (value.autoAttach) searchServers();
@@ -168,6 +169,7 @@
           });
         });
       maxPlayers = server.maxPlayers;
+      serverPings.set(server.id, server.ping);
     });
     
     if (!nextPageCursor) return;
@@ -407,6 +409,8 @@
 
         const item = document.createElement('li');
         const thumbnails = allThumbnails.get(targetServerIds[serverNumber].serverId);
+        const serverPing = serverPings.get(targetServerIds[serverNumber].serverId); 
+        const inviteURL = `roblox://placeId=${place}&gameInstanceId=${targetServerIds[serverNumber].serverId}`;
 
         let friendTags = '';
         if (friendServers.has(targetServerIds[serverNumber].serverId)) {
@@ -418,7 +422,11 @@
         item.className = 'rorsl-server stack-row rbx-game-server-item';
         var itemHtml = `
           <div class="section-left rbx-game-server-details'">
-          <div class="text-info rbx-game-status rbx-game-server-status'">${thumbnails.length} of ${maxPlayers} people max</div>
+          <div class="text-info rbx-game-status rbx-game-server-status">${thumbnails.length} of ${maxPlayers} people max</div>
+          <div class="text-info rbx-game-status rbx-game-server-ping">Server Ping: ${serverPing} ms</div>
+          <span>
+          <button onclick="navigator.clipboard.writeText('${inviteURL}')" type="button" class="btn-full-width btn-control-xs rbx-game-server-invite btn-primary-md">Invite</button>
+          </span>
           <span>
           <button onclick='Roblox.GameLauncher.joinGameInstance(${place}, "${targetServerIds[serverNumber].serverId}")' type="button" class="btn-full-width btn-control-xs rbx-game-server-join btn-primary-md">Join</button>
           </span>`;
