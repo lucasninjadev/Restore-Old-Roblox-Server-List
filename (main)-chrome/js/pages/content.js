@@ -599,4 +599,4 @@
   runningGames.parentNode.insertBefore(div, runningGames);
   div.style.display = 'block';
   panelReady = true;
-})();c
+})();
