@@ -119,8 +119,7 @@
   
     const friendServers = new Map();
     const allThumbnails = new Map();
-    const serverPings = new Map();
-  
+
     browser.storage.local.get('autoAttach').then(value => {
       if (value.autoAttach) searchServers();
     });
@@ -169,7 +168,6 @@
             });
           });
         maxPlayers = server.maxPlayers;
-        serverPings.set(server.id, server.ping);
       });
       
       if (!nextPageCursor) return;
@@ -409,7 +407,6 @@
   
           const item = document.createElement('li');
           const thumbnails = allThumbnails.get(targetServerIds[serverNumber].serverId);
-          const serverPing = serverPings.get(targetServerIds[serverNumber].serverId); 
           const inviteURL = `https://www.roblox.com/games/start?placeId=18429922864&launchData=${place}/${targetServerIds[serverNumber].serverId}`;
             
           let friendTags = '';
@@ -423,7 +420,6 @@
           var itemHtml = `
             <div class="section-left rbx-game-server-details'">
             <div class="text-info rbx-game-status rbx-game-server-status'">${thumbnails.length} of ${maxPlayers} people max</div>
-            <div class="text-info rbx-game-status rbx-game-server-ping">Server Ping: ${serverPing} ms</div>
             <span>
             <button onclick="navigator.clipboard.writeText('${inviteURL}')" type="button" class="btn-full-width btn-control-xs rbx-game-server-invite btn-primary-md">Invite</button>
             </span>
