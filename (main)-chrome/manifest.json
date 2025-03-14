@@ -3,7 +3,7 @@
   "name": "Restore Old Roblox Server List",
   "description": "Restores the old roblox server list & allows searching of users through their username",
   "author": "Lucas",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "icons": {
     "16": "images/16x16.png",
     "32": "images/32x32.png",

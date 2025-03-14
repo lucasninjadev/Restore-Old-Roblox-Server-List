@@ -125,6 +125,9 @@
 
   opacity: 0;
   transition: opacity 0.3s;
+
+  pointer-events: none;
+  user-select: none;
 }
 
 .light-theme .rorsl-tooltip .rorsl-tooltiptext::after {
@@ -316,6 +319,22 @@ input[type="number"] {
 	width: 77%;
 	text-align: left;
  	transform: translate(5px, 0px);
+
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  max-width: max-content;
+  align-self: center;
+  column-gap: 6px;
+  row-gap: 6px;
+}
+
+/* The hidden players placeholder has to have a class hierarchy of the entire new server display in order to have the right CSS, which I'm not doing. */
+.rorsl-server .hidden-players-placeholder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
 }
 
 .light-theme .rorsl-server {
@@ -330,6 +349,14 @@ input[type="number"] {
 .dark-theme .rorsl-server {
   background-color: #393b3d;
   border-color: #656668;
+}
+
+.dark-theme .rorsl-server .hidden-players-placeholder {
+  background-color: #6a6f81;
+}
+
+.light-theme .rorsl-server .hidden-players-placeholder {
+  background-color: rgba(230, 231, 234, .9);
 }
 
 .switch {

@@ -1,3 +1,5 @@
+// Chrome storage 'descending' actually is "ascending," but is called descending because I am really stupid and mixed the two up a while ago.
+
 async function sendSettingsRefresh() {
 	chrome.runtime.sendMessage('rorsl background refresh settings');
 }
@@ -9,6 +11,15 @@ function loadSettings() {
       $("#autoAttach").prop("checked", false);
     } else {
       $("#autoAttach").prop("checked", value.autoAttach);
+    }
+  });
+  
+  chrome.storage.local.get("fastSearch").then((value) => {
+    if (!value.fastSearch) {
+      chrome.storage.local.set({ fastSearch: false });
+      $("#fastSearch").prop("checked", false);
+    } else {
+      $("#fastSearch").prop("checked", value.fastSearch);
     }
   });
 
@@ -44,6 +55,11 @@ $(function () {
   loadSettings();
 	$("#autoAttach").change(function () {
     chrome.storage.local.set({ autoAttach: this.checked });
+    sendSettingsRefresh();
+  });
+  
+	$("#fastSearch").change(function () {
+    chrome.storage.local.set({ fastSearch: this.checked });
     sendSettingsRefresh();
   });
 

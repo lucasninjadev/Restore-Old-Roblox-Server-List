@@ -27,6 +27,16 @@
     <span class="slider round"></span>
   </label>
   <br style="clear:both" />
+  <h4 class="rorsl-settings-text" style="float: left; transform: translateY(-4px)">Faster Searching</h4>
+  <div class="rorsl-tooltip">
+    <img class="rorsl-info-button">
+    <span class="rorsl-tooltiptext">Searches for servers faster.<br/><br/>WARNING:<br/>Enabling this almost gurantees that you will not get more than 5 player images per server, however if you are already getting 5 player images per server with this setting disabled, enabling this is recommended.</span>
+  </div>
+  <label class="switch" style="float: right;">
+    <input type="checkbox" id="rorsl-fastSearch">
+    <span class="slider round"></span>
+  </label>
+  <br style="clear:both" />
   <h4 class="rorsl-settings-text" style="float: left; transform: translateY(-4px)">Servers per page</h4>
   <div class="rorsl-tooltip">
     <img class="rorsl-info-button">
@@ -34,7 +44,7 @@
   </div>
   <input class="rorsl-settings-text-input" type="number" id="rorsl-listSize" min=1>
   <br style="clear:both" />
-  <h4 class="rorsl-settings-text" style="float: left; transform: translateY(-4px)">Descending Player Count</h4>
+  <h4 class="rorsl-settings-text" style="float: left; transform: translateY(-4px)">Ascending Player Count</h4>
   <div class="rorsl-tooltip">
     <img class="rorsl-info-button">
     <span class="rorsl-tooltiptext">Servers will order from smallest amount of players to largest.</span>
@@ -47,7 +57,7 @@
   <h4 class="rorsl-settings-text" style="float: left; transform: translateY(-4px)">Search Player Username</h4>
   <div class="rorsl-tooltip">
     <img class="rorsl-info-button">
-    <span class="rorsl-tooltiptext">User that the extension will search for in the servers.<br/>(check the help page if it isn't working)</span>
+    <span class="rorsl-tooltiptext">User that the extension will search for in the servers.<br/><br/>IMPORTANT:<br/>If searching isn't working, it's likely that they are either intentionally not being shown by roblox, or that they were not found in the search.</span>
   </div>
   <input class="rorsl-settings-text-input" type="text" id="rorsl-username" maxlength="20">
   <br style="clear:both" />

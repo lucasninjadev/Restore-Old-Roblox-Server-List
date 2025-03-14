@@ -115,7 +115,7 @@
     serverId: "",
     serverSize: 0
   };
-  const serverIds = new Set();
+  const serverIds = new Map();
 
   const friendServers = new Map();
   const allThumbnails = new Map();
@@ -124,8 +124,10 @@
     if (value.autoAttach) searchServers();
   });
 
-  async function fetchServers(pass = 1, cursor = '', attempts = 0) {
-    const { nextPageCursor, data } = await get(`games.roblox.com/v1/games/${place}/servers/Public?limit=100&cursor=${cursor}`);
+  async function fetchServers(fastSearch = false, pass = 1, cursor = '', attempts = 0) {
+    console.log(fastSearch)
+    const { nextPageCursor, data } = await get(`games.roblox.com/v1/games/${place}/servers/Public?limit=100&cursor=${cursor}`, fastSearch);
+    // Friends
     if (pass == 1 && cursor == '') {
       const { id } = await get(`users.roblox.com/v1/users/authenticated`, true);
       const { data } = await get(`friends.roblox.com/v1/users/${id}/friends`);
@@ -152,13 +154,13 @@
     if (!data || data.length === 0) {
       if (!nextPageCursor) return;
       await sleep(1);
-      return fetchServers(pass, cursor, attempts + 1);
+      return fetchServers(fastSearch, pass, cursor, attempts + 1);
     }
 
     data.forEach((server) => {
       if (!serverIds.has(server.id))
         server.playerTokens.forEach((playerToken) => {
-          serverIds.add(server.id);
+          serverIds.set(server.id, server.playing);
           playersCount += 1;
           allPlayers.push({
             token: playerToken,
@@ -171,7 +173,7 @@
     });
     
     if (!nextPageCursor) return;
-    return fetchServers(pass, nextPageCursor);
+    return fetchServers(fastSearch, pass, nextPageCursor);
   }
 
   async function findTarget() {
@@ -216,7 +218,7 @@
       });
     }
     targetServerIds.forEach((targetServerId) => {
-      targetServerId.serverSize = allThumbnails.get(targetServerId.serverId).length;
+      targetServerId.serverSize = serverIds.get(targetServerId.serverId)//allThumbnails.get(targetServerId.serverId).length;
     });
     if (targetServerIds.length) {
       targetServerIds.forEach(targetServerId => {
@@ -259,7 +261,7 @@
     searchButtonContainer.style.opacity = '50%';
     reloadButtonContainer.style.opacity = '50%';
     if (div.hasAttribute('page-shown')) div.removeAttribute('page-shown');
-    
+
     targetServerIds = [];
     serverIds.clear();
     friendServers.clear();
@@ -276,15 +278,22 @@
     deleteRorslServers();
     playerUrlReady = false;
     updateUser();
+
+    var fastSearch = false;
+    await browser.storage.local.get('fastSearch').then(value => {
+      console.log(value)
+      if (value.fastSearch) fastSearch = true;
+    })
     var passes = 1;
-    browser.storage.local.get('searchPasses').then(value => {
+    await browser.storage.local.get('searchPasses').then(value => {
       if (!isNaN(value.searchPasses)) passes = value.searchPasses;
       if (passes < 1) passes = 1;
       if (passes > 10) passes = 10;
     });
+
     findTarget();
     for (var pass = 0; pass < passes; pass++)
-      if (!foundAllServers) await fetchServers(pass+1);
+      if (!foundAllServers) await fetchServers(fastSearch, pass+1);
     foundAllServers = true;
   }
 
@@ -316,14 +325,14 @@
     if (roprofooter.length > 0)
       roprofooter[0].style.display = 'none';
 
-    var servers = document.getElementsByClassName('rbx-game-server-item col-md-3 col-sm-4 col-xs-6');
+    var servers = document.getElementsByClassName('rbx-public-game-server-item col-md-3 col-sm-4 col-xs-6');
     for (let i = 0; i < servers.length; i++)
       while(servers[i].hasChildNodes())
         servers[i].removeChild(servers[i].firstChild);
   };
 
   async function deleteRorslServers() {
-    var rorslServers = document.getElementsByClassName('stack-row rbx-game-server-item');
+    var rorslServers = document.getElementsByClassName('rorsl-server rbx-public-game-server-item');
     while (rorslServers.length > 0)
       rorslServers[0].parentNode.removeChild(rorslServers[0]);
   }
@@ -388,7 +397,7 @@
           break;
         color(COLORS.GREEN);
 
-        let first = document.querySelectorAll('.rbx-game-server-item-container')[0];
+        let first = document.querySelectorAll('.rbx-public-game-server-item-container')[0];
         if (first == null) {
           first = document.querySelectorAll('.empty-game-instances-container')
           for (let i = 0; i < first.length; i++) {
@@ -399,7 +408,7 @@
           }
         }
         first.style.display = 'none';
-
+        
         if (first.className == 'no-servers-message') {
           first.parentNode.style['display'] = 'flex';
           first.parentNode.style['flex-direction'] = 'column';
@@ -415,18 +424,23 @@
             if (friend+1 < friends.length) friendTags += `<a class="text-name" href="https://www.roblox.com/users/${friends[friend].id}/profile" style="padding:0;margin-right:5px;display:inline-block;">${friends[friend].displayName},</a>`;
             else friendTags += `<a class="text-name" href="https://www.roblox.com/users/${friends[friend].id}/profile" style="padding:0;display:inline-block;">${friends[friend].displayName}</a>`;
         }
-        item.className = 'rorsl-server stack-row rbx-game-server-item';
+        item.className = 'rorsl-server rbx-public-game-server-item';
         var itemHtml = `
-          <div class="section-left rbx-game-server-details'">
-          <div class="text-info rbx-game-status rbx-game-server-status'">${thumbnails.length} of ${maxPlayers} people max</div>
+          <div class="section-left rbx-public-game-server-details">
+          <div class="text-info rbx-public-game-status rbx-public-game-server-status">${targetServerIds[serverNumber].serverSize} of ${maxPlayers} people max</div>
           <span>
-          <button onclick='Roblox.GameLauncher.joinGameInstance(${place}, "${targetServerIds[serverNumber].serverId}")' type="button" class="btn-full-width btn-control-xs rbx-game-server-join btn-primary-md">Join</button>
+          <button onclick='Roblox.GameLauncher.joinGameInstance(${place}, "${targetServerIds[serverNumber].serverId}")' type="button" class="btn-full-width btn-control-xs rbx-public-game-server-join btn-primary-md">Join</button>
           </span>`;
         if (friendTags.length > 0) itemHtml += `<div style="margin-top:5px;" class="text friends-in-server-label">Friends in this server: ${friendTags}</div>`;
         itemHtml += `</div>
-          <div class="section-right rbx-game-server-players">
+          <div class="section-right player-thumbnails-container">
           ${thumbnails.map(url => `<span class="avatar avatar-headshot-sm player-avatar"><span class="thumbnail-2d-container avatar-card-image"><img src="${url}"></span></span>`).join('')}
-          </div>`;
+          `;
+        var hiddenPlayers = targetServerIds[serverNumber].serverSize - thumbnails.length;
+        if (hiddenPlayers > 0) {
+          itemHtml += `<span class="avatar avatar-headshot-sm player-avatar hidden-players-placeholder">+${hiddenPlayers}</span>`;
+        }
+        itemHtml += "</div>"
         item.innerHTML = itemHtml;
 
         for (let j = 0; j < thumbnails.length; j++)
@@ -439,7 +453,7 @@
       }
       searchButton.disabled = false;
       searchButtonContainer.style.opacity = '100%';
-
+      
       pageStatusEnd.innerText = ' of ' + maxPages;
       pageNum.parentElement.style.display = 'inherit';
       div.setAttribute('page-shown', true);
@@ -515,6 +529,15 @@
         $("#rorsl-autoAttach").prop("checked", value.autoAttach);
       }
     });
+
+    browser.storage.local.get("fastSearch").then((value) => {
+      if (!value.fastSearch) {
+        browser.storage.local.set({ fastSearch: false });
+        $("#rorsl-fastSearch").prop("checked", false);
+      } else {
+        $("#rorsl-fastSearch").prop("checked", value.fastSearch);
+      }
+    });
   
     browser.storage.local.get("listSize").then((value) => {
       if (!value.listSize || value.listSize < 1 || value.listSize > 250) {
@@ -548,6 +571,11 @@
     loadSettings();
     $("#rorsl-autoAttach").change(function () {
       browser.storage.local.set({ autoAttach: this.checked });
+      browser.runtime.sendMessage("rorsl background refresh settings");
+    });
+
+    $("#rorsl-fastSearch").change(function () {
+      browser.storage.local.set({ fastSearch: this.checked });
       browser.runtime.sendMessage("rorsl background refresh settings");
     });
   
@@ -587,7 +615,7 @@
     if (request == "rorsl refresh settings") loadSettings();
   });
 
-  const runningGames = await waitForElm('#rbx-running-games');
+  const runningGames = await waitForElm('#rbx-public-running-games');
   runningGames.parentNode.insertBefore(div, runningGames);
   div.style.display = 'block';
   panelReady = true;
